@@ -1,34 +1,18 @@
-//
-//  FlickerPhotosViewController.swift
-//  UICollectionViewGettingStarted
-//
-//  Created by ALIREZA TABRIZI on 12/3/16.
-//  Copyright © 2016 AR-T.com, Inc. All rights reserved.
-//
-
 import UIKit
 
-private let reuseIdentifier = "Cell"
-
-class FlickerPhotosViewController: UICollectionViewController {
-
-    fileprivate let reuseIdentifier = "FlickerCell"
-    fileprivate let sectionInset = UIEdgeInsetsMake(50.0, 20.0, 50.0, 20.0)
+final class FlickerPhotosViewController: UICollectionViewController {
+    
+    // MARK: - Properties
+    fileprivate let reuseIdentifier = "FlickrCell"
+    fileprivate let sectionInsets = UIEdgeInsets(top: 50.0, left: 20.0, bottom: 50.0, right: 20.0)
+    
     fileprivate var searches = [FlickrSearchResults]()
-    fileprivate let flicker = Flickr()
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-    }
-    
-    
-    
+    fileprivate let flickr = Flickr()
+    fileprivate let itemsPerRow: CGFloat = 3
 }
 
-//MARK: - Private
-///photoForIndexPath is a convenience method that will get a specific photo related to an index path in your collection view. You’re going to access a photo for a specific index path a lot, and you don’t want to repeat code.
-private extension FlickerPhotosViewController{
+// MARK: - Private
+private extension FlickerPhotosViewController {
     func photoForIndexPath(_ indexPath: IndexPath) -> FlickrPhoto {
         return searches[(indexPath as NSIndexPath).section].searchResults[(indexPath as NSIndexPath).row]
     }
@@ -36,34 +20,92 @@ private extension FlickerPhotosViewController{
 
 extension FlickerPhotosViewController : UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        // 1 - After adding an activity view, use the Flickr wrapper class I provided to search Flickr for photos that match the given search term asynchronously. When the search completes, the completion block will be called with a the result set of FlickrPhoto objects, and an error (if there was one)
+        // 1
         let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
         textField.addSubview(activityIndicator)
         activityIndicator.frame = textField.bounds
-        activityIndicator.stopAnimating()
+        activityIndicator.startAnimating()
         
-        flicker.searchFlickrForTerm(textField.text!) { (results, error) in
+        flickr.searchFlickrForTerm(textField.text!) {
+            results, error in
+            
             
             activityIndicator.removeFromSuperview()
             
+            
             if let error = error {
-                // 2 - Log any errors to the console. Obviously, in a production application you would want to display these errors to the user.
-                print("Error searching: \(error)")
+                // 2
+                print("Error searching : \(error)")
                 return
             }
             
             if let results = results {
-                // 3 - The results get logged and added to the front of the searches array
+                // 3
                 print("Found \(results.searchResults.count) matching \(results.searchTerm)")
                 self.searches.insert(results, at: 0)
                 
-                //4 - At this stage, you have new data and need to refresh the UI. You’re using the reloadData() method, which works just like it does in a table view.
-               // self.collectionView?.reloadData()
+                // 4
+                self.collectionView?.reloadData()
             }
         }
         
         textField.text = nil
         textField.resignFirstResponder()
         return true
+    }
+}
+
+// MARK: - UICollectionViewDataSource
+extension FlickerPhotosViewController {
+    //1
+    override func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return searches.count
+    }
+    
+    //2
+    override func collectionView(_ collectionView: UICollectionView,
+                                 numberOfItemsInSection section: Int) -> Int {
+        return searches[section].searchResults.count
+    }
+    
+    //3
+    override func collectionView(_ collectionView: UICollectionView,
+                                 cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        //1
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier,
+                                                                         for: indexPath) as! FlickerPhotoCell
+        //2
+        let flickrPhoto = photoForIndexPath(indexPath)
+        cell.backgroundColor = UIColor.white
+        //3
+        cell.imageView.image = flickrPhoto.thumbnail
+        
+        return cell
+    }
+}
+
+extension FlickerPhotosViewController : UICollectionViewDelegateFlowLayout {
+    //1
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                               sizeForItemAt indexPath: IndexPath) -> CGSize {
+        //2
+        let paddingSpace = sectionInsets.left * (itemsPerRow + 1)
+        let availableWidth = view.frame.width - paddingSpace
+        let widthPerItem = availableWidth / itemsPerRow
+        
+        return CGSize(width: widthPerItem, height: widthPerItem)
+    }
+    
+    //3
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                               insetForSectionAt section: Int) -> UIEdgeInsets {
+        return sectionInsets
+    }
+    
+    // 4
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return sectionInsets.left
     }
 }
