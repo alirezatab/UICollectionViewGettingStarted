@@ -9,6 +9,33 @@ final class FlickerPhotosViewController: UICollectionViewController {
     fileprivate var searches = [FlickrSearchResults]()
     fileprivate let flickr = Flickr()
     fileprivate let itemsPerRow: CGFloat = 3
+    
+    // 1 - largePhotoIndexPath is an optional that will hold the index path of the tapped photo, if there is one.
+    var largePhotoIndexPath: IndexPath? {
+        didSet {
+            // 2 - Whenever this property gets updated, the collection view needs to be updated. a didSet property observer is the safest place to manage this. There may be two cells that need reloading, if the user has tapped one cell then another, or just one if the user has tapped the first cell, then tapped it again to shrink.
+            var indexPaths = [IndexPath]()
+            if let largePhotoIndexPath = largePhotoIndexPath {
+                indexPaths.append(largePhotoIndexPath)
+            }
+            if let oldValue = oldValue {
+                indexPaths.append(oldValue)
+            }
+            
+            // 3 - performBatchUpdates will animate any changes to the collection view performed inside the block. You want it to reload the affected cells.
+            collectionView?.performBatchUpdates({ 
+                self.collectionView?.reloadItems(at: indexPaths)
+            }) { completed in
+                
+                // 4 - Once the animated update has finished, it’s a nice touch to scroll the enlarged cell to the middle of the screen
+                if let largePhotoIndexPath = self.largePhotoIndexPath{
+                    self.collectionView?.scrollToItem(at: largePhotoIndexPath as IndexPath, at: .centeredVertically, animated: true)
+                }
+            
+            }
+            
+        }
+    }
 }
 
 // MARK: - Private
@@ -88,15 +115,46 @@ extension FlickerPhotosViewController {
     //3
     override func collectionView(_ collectionView: UICollectionView,
                                  cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        //1
+        // 1 -
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier,
                                                                          for: indexPath) as! FlickerPhotoCell
-        //2
+        // 2 -
         let flickrPhoto = photoForIndexPath(indexPath)
-        cell.backgroundColor = UIColor.white
-        //3
-        cell.imageView.image = flickrPhoto.thumbnail
         
+        // 3 - Always stop the activity spinner – you could be reusing a cell that was previously loading an image
+        cell.activityIndicator.stopAnimating()
+        
+        // 4 - This part is as before – if you’re not looking at the large photo, just set the thumbnail and return
+        guard indexPath == largePhotoIndexPath else {
+            cell.imageView.image = flickrPhoto.thumbnail
+            return cell
+        }
+        
+        // 5 - If the large image is (Ali added: not loaded) already loaded, set it and return
+        guard flickrPhoto.largeImage == nil else {
+            cell.imageView.image = flickrPhoto.largeImage
+            return cell
+        }
+        
+        // 6 - By this point, you want the large image, but it doesn’t exist yet. Set the thumbnail image and start the spinner going. The thumbnail will stretch until the download is complete
+        cell.imageView.image = flickrPhoto.thumbnail
+        cell.activityIndicator.startAnimating()
+        
+        // 7 - Ask for the large image from Flickr. This loads the image asynchronously and has a completion block
+        flickrPhoto.loadLargeImage { (loadFlickerPhoto, error) in
+            // 8 - The load has finished, so stop the spinner
+            cell.activityIndicator.stopAnimating()
+            
+            // 9 - If there was an error or no photo was loaded, there’s not much you can do.
+            guard loadFlickerPhoto.largeImage != nil && error == nil else {
+                return
+            }
+            
+            // 10 - Check that the large photo index path hasn’t changed while the download was happening, and retrieve whatever cell is currently in use for that index path (it may not be the original cell, since scrolling could have happened) and set the large image.
+            if let cell = collectionView.cellForItem(at: indexPath) as? FlickerPhotoCell, indexPath == self.largePhotoIndexPath {
+                cell.imageView.image = loadFlickerPhoto.largeImage
+            }
+        }
         return cell
     }
 }
@@ -106,6 +164,16 @@ extension FlickerPhotosViewController : UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                                sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        if indexPath == largePhotoIndexPath {
+            let flickerPhoto = photoForIndexPath(indexPath)
+            var size = collectionView.bounds.size
+            size.height -= topLayoutGuide.length
+            size.height -= (sectionInsets.top + sectionInsets.right)
+            size.width -= (sectionInsets.left + sectionInsets.right)
+            return flickerPhoto.sizeToFillWidthOfSize(size)
+        }
+        
         //2
         let paddingSpace = sectionInsets.left * (itemsPerRow + 1)
         let availableWidth = view.frame.width - paddingSpace
@@ -127,7 +195,17 @@ extension FlickerPhotosViewController : UICollectionViewDelegateFlowLayout {
     }
 }
 
-
+// MARK: - UICollectionViewDelegate
+extension FlickerPhotosViewController{
+    
+    override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+    
+        // This method is pretty simple. If the tapped cell is already the large photo, set the largePhotoIndexPath property to nil, otherwise set it to the index path the user just tapped. This will then call the property observer you added earlier and cause the collection view to reload the affected cell(s).
+        largePhotoIndexPath = largePhotoIndexPath == indexPath ? nil : indexPath
+        
+        return false
+    }
+}
 
 
 
