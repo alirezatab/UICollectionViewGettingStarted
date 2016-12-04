@@ -8,13 +8,16 @@
 
 /* Begin PBXBuildFile section */
 		C271CD9B1DF3ADEE008171F1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C271CD9A1DF3ADEE008171F1 /* AppDelegate.swift */; };
-		C271CD9D1DF3ADEE008171F1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C271CD9C1DF3ADEE008171F1 /* ViewController.swift */; };
 		C271CDA01DF3ADEE008171F1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C271CD9E1DF3ADEE008171F1 /* Main.storyboard */; };
 		C271CDA31DF3ADEE008171F1 /* UICollectionViewGettingStarted.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = C271CDA11DF3ADEE008171F1 /* UICollectionViewGettingStarted.xcdatamodeld */; };
 		C271CDA51DF3ADEE008171F1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C271CDA41DF3ADEE008171F1 /* Assets.xcassets */; };
 		C271CDA81DF3ADEE008171F1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C271CDA61DF3ADEE008171F1 /* LaunchScreen.storyboard */; };
 		C271CDB31DF3ADEE008171F1 /* UICollectionViewGettingStartedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C271CDB21DF3ADEE008171F1 /* UICollectionViewGettingStartedTests.swift */; };
 		C271CDBE1DF3ADEE008171F1 /* UICollectionViewGettingStartedUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C271CDBD1DF3ADEE008171F1 /* UICollectionViewGettingStartedUITests.swift */; };
+		C271CDD21DF3BAEF008171F1 /* Flickr.swift in Sources */ = {isa = PBXBuildFile; fileRef = C271CDCF1DF3BAEF008171F1 /* Flickr.swift */; };
+		C271CDD31DF3BAEF008171F1 /* FlickrPhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = C271CDD01DF3BAEF008171F1 /* FlickrPhoto.swift */; };
+		C271CDD41DF3BAEF008171F1 /* FlickrSearchResults.swift in Sources */ = {isa = PBXBuildFile; fileRef = C271CDD11DF3BAEF008171F1 /* FlickrSearchResults.swift */; };
+		C271CDD61DF3C803008171F1 /* FlickerPhotosViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C271CDD51DF3C803008171F1 /* FlickerPhotosViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,7 +40,6 @@
 /* Begin PBXFileReference section */
 		C271CD971DF3ADEE008171F1 /* UICollectionViewGettingStarted.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UICollectionViewGettingStarted.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C271CD9A1DF3ADEE008171F1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		C271CD9C1DF3ADEE008171F1 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		C271CD9F1DF3ADEE008171F1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		C271CDA21DF3ADEE008171F1 /* UICollectionViewGettingStarted.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UICollectionViewGettingStarted.xcdatamodel; sourceTree = "<group>"; };
 		C271CDA41DF3ADEE008171F1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -49,6 +51,10 @@
 		C271CDB91DF3ADEE008171F1 /* UICollectionViewGettingStartedUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UICollectionViewGettingStartedUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C271CDBD1DF3ADEE008171F1 /* UICollectionViewGettingStartedUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UICollectionViewGettingStartedUITests.swift; sourceTree = "<group>"; };
 		C271CDBF1DF3ADEE008171F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C271CDCF1DF3BAEF008171F1 /* Flickr.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Flickr.swift; sourceTree = "<group>"; };
+		C271CDD01DF3BAEF008171F1 /* FlickrPhoto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlickrPhoto.swift; sourceTree = "<group>"; };
+		C271CDD11DF3BAEF008171F1 /* FlickrSearchResults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlickrSearchResults.swift; sourceTree = "<group>"; };
+		C271CDD51DF3C803008171F1 /* FlickerPhotosViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlickerPhotosViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,8 +106,11 @@
 			isa = PBXGroup;
 			children = (
 				C271CD9A1DF3ADEE008171F1 /* AppDelegate.swift */,
-				C271CD9C1DF3ADEE008171F1 /* ViewController.swift */,
+				C271CDD51DF3C803008171F1 /* FlickerPhotosViewController.swift */,
 				C271CD9E1DF3ADEE008171F1 /* Main.storyboard */,
+				C271CDCF1DF3BAEF008171F1 /* Flickr.swift */,
+				C271CDD01DF3BAEF008171F1 /* FlickrPhoto.swift */,
+				C271CDD11DF3BAEF008171F1 /* FlickrSearchResults.swift */,
 				C271CDA41DF3ADEE008171F1 /* Assets.xcassets */,
 				C271CDA61DF3ADEE008171F1 /* LaunchScreen.storyboard */,
 				C271CDA91DF3ADEE008171F1 /* Info.plist */,
@@ -265,8 +274,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C271CDD61DF3C803008171F1 /* FlickerPhotosViewController.swift in Sources */,
+				C271CDD41DF3BAEF008171F1 /* FlickrSearchResults.swift in Sources */,
 				C271CDA31DF3ADEE008171F1 /* UICollectionViewGettingStarted.xcdatamodeld in Sources */,
-				C271CD9D1DF3ADEE008171F1 /* ViewController.swift in Sources */,
+				C271CDD21DF3BAEF008171F1 /* Flickr.swift in Sources */,
+				C271CDD31DF3BAEF008171F1 /* FlickrPhoto.swift in Sources */,
 				C271CD9B1DF3ADEE008171F1 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -516,6 +528,7 @@
 				C271CDC41DF3ADEE008171F1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		C271CDC51DF3ADEE008171F1 /* Build configuration list for PBXNativeTarget "UICollectionViewGettingStartedTests" */ = {
 			isa = XCConfigurationList;
@@ -524,6 +537,7 @@
 				C271CDC71DF3ADEE008171F1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		C271CDC81DF3ADEE008171F1 /* Build configuration list for PBXNativeTarget "UICollectionViewGettingStartedUITests" */ = {
 			isa = XCConfigurationList;
@@ -532,6 +546,7 @@
 				C271CDCA1DF3ADEE008171F1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
