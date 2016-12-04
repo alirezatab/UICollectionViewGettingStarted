@@ -10,6 +10,9 @@ final class FlickerPhotosViewController: UICollectionViewController {
     fileprivate let flickr = Flickr()
     fileprivate let itemsPerRow: CGFloat = 3
     
+    fileprivate var selectedPhotos = [FlickrPhoto]()
+    fileprivate let shareTextLabel = UILabel()
+    
     // 1 - largePhotoIndexPath is an optional that will hold the index path of the tapped photo, if there is one.
     var largePhotoIndexPath: IndexPath? {
         didSet {
@@ -36,6 +39,52 @@ final class FlickerPhotosViewController: UICollectionViewController {
             
         }
     }
+    
+    ///Belo and above property is how you do a property observer
+    // sharing is a Bool with another property observer, similar to largePhotoIndexPath above
+    var sharing : Bool = false {
+        didSet{
+            // you toggle the multiple selection status of the collection view, clear any existing selection and empty the selected photos array.
+            collectionView?.allowsMultipleSelection = sharing
+            collectionView?.selectItem(at: nil, animated: true, scrollPosition: UICollectionViewScrollPosition())
+            selectedPhotos.removeAll(keepingCapacity: false)
+            
+            // You also update the bar button items to include and update the shareTextLabel.
+            guard let shareButton = self.navigationItem.rightBarButtonItems?.first else {
+                return
+            }
+            
+            guard sharing else {
+                navigationItem.setRightBarButtonItems([shareButton], animated: true)
+                return
+            }
+            
+            if let _ = largePhotoIndexPath {
+                largePhotoIndexPath = nil
+            }
+            
+            
+            updateSharedPhotoCount()
+            let sharingDetailItem = UIBarButtonItem(customView: shareTextLabel)
+            navigationItem.setRightBarButtonItems([shareButton, sharingDetailItem], animated: true)
+        }
+    }
+    
+    //At the moment, all this method does is some checking to make sure the user has actually searched for something, and has selected photos to share.
+    @IBAction func share(_ sender: UIBarButtonItem) {
+        guard !searches.isEmpty else {
+            return
+        }
+        
+        guard !selectedPhotos.isEmpty else {
+            sharing = !sharing
+            return
+        }
+        guard sharing else {
+            return
+        }
+        //TODO actually sharing photos!
+    }
 }
 
 // MARK: - Private
@@ -43,7 +92,15 @@ private extension FlickerPhotosViewController {
     func photoForIndexPath(_ indexPath: IndexPath) -> FlickrPhoto {
         return searches[(indexPath as NSIndexPath).section].searchResults[(indexPath as NSIndexPath).row]
     }
+    
+    func updateSharedPhotoCount() {
+        shareTextLabel.textColor = themeColor
+        shareTextLabel.text = "\(selectedPhotos.count) photos selected"
+        shareTextLabel.sizeToFit()
+    }
 }
+
+
 
 extension FlickerPhotosViewController : UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
