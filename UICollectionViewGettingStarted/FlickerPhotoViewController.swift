@@ -254,13 +254,45 @@ extension FlickerPhotosViewController : UICollectionViewDelegateFlowLayout {
 
 // MARK: - UICollectionViewDelegate
 extension FlickerPhotosViewController{
+
     
     override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
     
+        // This will allow selection in sharing mode.
+        guard !sharing else {
+            return true
+        }
+        
         // This method is pretty simple. If the tapped cell is already the large photo, set the largePhotoIndexPath property to nil, otherwise set it to the index path the user just tapped. This will then call the property observer you added earlier and cause the collection view to reload the affected cell(s).
         largePhotoIndexPath = largePhotoIndexPath == indexPath ? nil : indexPath
         
         return false
+    }
+    
+    // This method allows adding selected photos to the shared photos array and updates the shareTextLabel.
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard sharing else {
+            return
+        }
+        
+        let photo = photoForIndexPath(indexPath)
+        selectedPhotos.append(photo)
+        updateSharedPhotoCount()
+    }
+    
+    
+    // This method removes a photo from the shared photos array and updates the shareTextLabel.
+    override func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        guard sharing else {
+            return
+        }
+        
+        let photo = photoForIndexPath(indexPath)
+        
+        if let index = selectedPhotos.index(of: photo){
+            selectedPhotos.remove(at: index)
+            updateSharedPhotoCount()
+        }
     }
 }
 
