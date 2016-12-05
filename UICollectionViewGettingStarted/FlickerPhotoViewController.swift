@@ -233,6 +233,13 @@ extension FlickerPhotosViewController {
         }
         return cell
     }
+    
+    override func collectionView(_ collectionView: UICollectionView, moveItemAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        var sourceResults = searches[(sourceIndexPath as NSIndexPath).section].searchResults
+        let flickerPhoto = sourceResults.remove(at: (sourceIndexPath as NSIndexPath).row)
+        var destinationResults = searches[(destinationIndexPath as NSIndexPath).section].searchResults
+        destinationResults.insert(flickerPhoto, at: (destinationIndexPath as NSIndexPath).row)
+    }
 }
 
 extension FlickerPhotosViewController : UICollectionViewDelegateFlowLayout {
