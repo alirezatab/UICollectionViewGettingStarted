@@ -83,7 +83,26 @@ final class FlickerPhotosViewController: UICollectionViewController {
         guard sharing else {
             return
         }
-        //TODO actually sharing photos!
+
+        var imageArray = [UIImage]()
+        for selectedPhoto in selectedPhotos {
+            if let thumbnail = selectedPhoto.thumbnail {
+                imageArray.append(thumbnail)
+            }
+        }
+        
+        // 1 - First, this code creates an array of UIImage objects from the FlickrPhoto‘s thumbnails
+        if !imageArray.isEmpty {
+            // 2 - The UIActivityViewController will show the user any image sharing services or actions available on the device: iMessage, Mail, Print, etc
+            let shareScreen = UIActivityViewController(activityItems: imageArray, applicationActivities: nil)
+            shareScreen.completionWithItemsHandler = { _ in
+                self.sharing = false
+            }
+            let popoverPresentationController = shareScreen.popoverPresentationController
+            popoverPresentationController?.barButtonItem = sender
+            popoverPresentationController?.permittedArrowDirections = .any
+            present(shareScreen, animated: true, completion: nil)
+        }
     }
 }
 
